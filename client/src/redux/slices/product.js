@@ -7,11 +7,12 @@ export const initialState = {
   product: [],
   pagination: {},
   favoritesToggled: true,
+  reviewed: false,
   favorites: JSON.parse(localStorage.getItem('favorites')) ?? [],
 };
 
 export const productsSlice = createSlice({
-  name: 'product',
+  name: 'products',
   initialState,
   reducers: {
     setLoading: (state) => {
@@ -21,6 +22,12 @@ export const productsSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.products = payload;
+    },
+    setProduct: (state, { payload }) => {
+      state.product = payload;
+      state.loading = false;
+      state.error = null;
+      state.reviewed = false;
     },
     setError: (state, { payload }) => {
       state.loading = false;
@@ -40,7 +47,7 @@ export const productsSlice = createSlice({
   },
 });
 
-export const { setLoading, setError, setProducts, setPagination, setFavorites, setFavoritesToggle } =
+export const { setLoading, setError, setProducts, setPagination, setFavorites, setFavoritesToggle, setProduct } =
   productsSlice.actions;
 
 export default productsSlice.reducer;

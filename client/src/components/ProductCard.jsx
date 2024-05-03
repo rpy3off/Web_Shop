@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Image, Text, Badge, Flex, IconButton, Skeleton } from '@chakra-ui/react';
 import { BiExpand } from 'react-icons/bi';
 import { addToFavorites, removeFromFavorites } from '../redux/actions/productActions';
 import { useSelector, useDispatch } from 'react-redux';
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from 'react-icons/md';
+import { Link as ReactLink } from 'react-router-dom';
 
-function ProductCart({ product, loading }) {
+function ProductCard({ product, loading }) {
   const dispatch = useDispatch();
   const { favorites } = useSelector((state) => state.product);
+  const [isShown, setIsShown] = useState(false);
 
   return (
-    <Skeleton isLoaded={!loading} _hover={{ size: '1.5' }}>
+    <Skeleton isLoaded={!loading}>
       <Box
         _hover={{ transform: 'scale(1.1)', transitionDuration: '0.5s' }}
         borderWidth='1px'
@@ -19,7 +21,9 @@ function ProductCart({ product, loading }) {
         shadow='md'
       >
         <Image
-          src={product.images[0]}
+          onMouseEnter={() => setIsShown(true)}
+          onMouseLeave={() => setIsShown(false)}
+          src={product.images[isShown && product.images.length === 2 ? 1 : 0]}
           fallbackSrc='https://via.placeholder.com/150'
           alt={product.name}
           height='200px'
@@ -55,22 +59,28 @@ function ProductCart({ product, loading }) {
               icon={<MdOutlineFavorite size='20px' />}
               colorScheme='cyan'
               size='sm'
-              onClick={() => dispatch(removeFromFavorites(product._id))} 
+              onClick={() => dispatch(removeFromFavorites(product._id))}
             />
           ) : (
             <IconButton
               icon={<MdOutlineFavoriteBorder size='20px' />}
               colorScheme='cyan'
               size='sm'
-              onClick={() => dispatch(addToFavorites(product._id))} 
+              onClick={() => dispatch(addToFavorites(product._id))}
             />
           )}
 
-          <IconButton icon={<BiExpand size='20' />} colorScheme='cyan' size='sm' />
+          <IconButton
+            icon={<BiExpand size='20' />}
+            as={ReactLink}
+            to={`/product/${product._id}`}
+            colorScheme='cyan'
+            size='sm'
+          />
         </Flex>
       </Box>
     </Skeleton>
   );
 }
 
-export default ProductCart;
+export default ProductCard;
